@@ -43,15 +43,17 @@ Include in this file the first paragraph of the Wikipedia page of these leaders 
     beautifulsoup4 >= 4.12.0
 
 ## Timeline
-- **February 15, 2024:** 
+- **February 14, 2024:** 
   >>> Project kickoff<br>
   >>> Solution development<br>
 
-- **February 16, 2024:**
+- **February 15, 2024:**
   >>> Solution development<br>
   >>> Code documentation<br>              
-- **February 17, 2024:** 
-  >>> Creation of [README.md](README.md) file
+- **February 16, 2024:** 
+  >>> Creation of [README.md](README.md) file  
+  >>> Making improvements<br>
+  
 
 
 ## Project structure
