@@ -1,4 +1,4 @@
-<h1 align="center"> Open space organizer </h1>
+<h1 align="center"> Wikipedia scraper </h1>
 
 <p align="center">
     <img src="src/img/wiki_scraping_python.png" alt="openspace.png">
