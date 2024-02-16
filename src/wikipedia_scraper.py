@@ -40,7 +40,7 @@ class WikipediaScraper:
         modified_text = re.sub(xa, ' ', modified_text)
         return modified_text
 
-    def get_first_paragraph(self, leader: object, soup: BeautifulSoup) -> None:
+    def get_first_paragraph(self, leader: object) -> None:
         """
         Get the first paragraph of the Wikipedia article for the given leader
         and assign it to the leader's 'bio_first_paragraph' attribute.
@@ -51,6 +51,9 @@ class WikipediaScraper:
             soup (BeautifulSoup): The BeautifulSoup object containing the parsed HTML
                                    of the Wikipedia page.
         """
+
+        response = requests.get(leader.wikipedia_url)
+        soup = BeautifulSoup(response.content, 'html.parser')
 
         # Get all content for the div tag with id="mw-content-text".
         # This div contains all text content of the wikipedia page
@@ -68,12 +71,15 @@ class WikipediaScraper:
         """
         Scrape Wikipedia data for each country leader, clean the first paragraph, and export to JSON and CSV files.
         """
-        # Iterate through each country leader
-        for leader in self.country_leaders.leaders_data:
-            response = requests.get(leader.wikipedia_url)
-            soup = BeautifulSoup(response.content, 'html.parser')
-            # Get the first paragraph from Wikipedia article
-            self.get_first_paragraph(leader, soup)
+
+        with ThreadPoolExecutor() as executor:
+            # Iterate through each country leader
+            futures = []
+            for leader in self.country_leaders.leaders_data:
+                # Get the first paragraph from Wikipedia article
+                futures.append(executor.submit(self.get_first_paragraph, leader))
+            for future in futures:
+                future.result()
 
         # Export leaders data to JSON and CSV files
         self.country_leaders.export_to_json()
