@@ -34,12 +34,6 @@ Include in this file the first paragraph of the Wikipedia page of these leaders 
 ## Usage
 ***
     Usage:
-        To run the program with default input and output file paths:
-            run()
-
-        To specify custom input and output file paths:
-            run(['--input', 'path/to/input/file.csv', '--output', 'path/to/output/file.csv'])
-
         Tu run the program in the terminal:
             python main.py 
  
