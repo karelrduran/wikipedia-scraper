@@ -2,6 +2,7 @@ import re
 import requests
 from bs4 import BeautifulSoup
 from concurrent.futures import ThreadPoolExecutor
+from multiprocessing import Pool, Process
 from .country_leader import CountryLeaders
 
 
@@ -39,15 +40,16 @@ class WikipediaScraper:
         modified_text = re.sub(xa, ' ', modified_text)
         return modified_text
 
-    def get_first_paragraph(self, soup: BeautifulSoup) -> str:
+    def get_first_paragraph(self, leader: object, soup: BeautifulSoup) -> None:
         """
-        Get the first paragraph of Wikipedia article.
+        Get the first paragraph of the Wikipedia article for the given leader
+        and assign it to the leader's 'bio_first_paragraph' attribute.
 
         Args:
-            soup (BeautifulSoup): The BeautifulSoup object containing the parsed HTML.
-
-        Returns:
-            str: The cleaned first paragraph text.
+            leader (object): The leader object for whom the first paragraph of the
+                             Wikipedia article is being fetched.
+            soup (BeautifulSoup): The BeautifulSoup object containing the parsed HTML
+                                   of the Wikipedia page.
         """
 
         # Get all content for the div tag with id="mw-content-text".
@@ -57,11 +59,10 @@ class WikipediaScraper:
         # Iterate through paragraphs to find the first paragraph with bold text
         for paragraph in all_paragraphs:
             if paragraph.b:
+                # Clean the paragraph text by replacing certain characters
                 paragraph_cleaned = self.clean_paragraph(paragraph.text.replace("'", '').replace('"', ''))
-                return paragraph_cleaned
-
-        # If the first paragraph is not found, return an empty string
-        return ''
+                # Assign the cleaned paragraph text to the leader's 'bio_first_paragraph' attribute
+                leader.bio_first_paragraph = paragraph_cleaned
 
     def do_scrap(self):
         """
@@ -72,7 +73,8 @@ class WikipediaScraper:
             response = requests.get(leader.wikipedia_url)
             soup = BeautifulSoup(response.content, 'html.parser')
             # Get the first paragraph from Wikipedia article
-            leader.bio_first_paragraph = self.get_first_paragraph(soup)
+            self.get_first_paragraph(leader, soup)
+
         # Export leaders data to JSON and CSV files
         self.country_leaders.export_to_json()
         self.country_leaders.export_to_csv()
